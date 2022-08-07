@@ -212,8 +212,11 @@ while options[currrentOptionIndex] != "quit":
                 pageStep += 1
                 if not os.path.exists(pagesLocation + chapter + "/"):
                     os.makedirs(pagesLocation + chapter + "/")
-
+                
                 img = cv2.imread(extractLocation + chapter + "/" + page)
+                
+                if img is None:
+                    continue
 
                 if split :
                     width = img.shape[1]
