@@ -111,13 +111,18 @@ while options[currrentOptionIndex] != "quit":
                         minSize = len(content)
                         content = content
                 chapterNumber = link.split("/")[-1].split("_")[-1]
+                fullChapterName = chapterNumber
+                numeric_filter = filter(str.isdigit, chapterNumber)
+                numeric_string = "".join(numeric_filter)
+                chapterNumber = numeric_string
+                chapterSuffix = fullChapterName.replace(chapterNumber, "")
 
                 if len(chapterNumber) == 1:
                     chapterNumber = "00" + chapterNumber
                 elif len(chapterNumber) == 2:
                     chapterNumber = "0" + chapterNumber
 
-                filePath = location + "Chapter_" + chapterNumber + ".zip"
+                filePath = location + "Chapter_" + chapterNumber + chapterSuffix + ".zip"
                 open(filePath, "wb").write(res.content)
             
             clearConsole()
