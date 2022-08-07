@@ -16,7 +16,7 @@ zipSuffix =  "/zip/"
 extractSuffix =  "/images/"
 pagesSuffix =  "/pages/"
 
-options = ["menu", "change", "download", "extract", "build", "quit"]
+options = ["menu", "change", "download", "extract", "build", "clean", "quit"]
 currrentOptionIndex = 1
 
 mangaName = ""
@@ -38,6 +38,7 @@ while options[currrentOptionIndex] != "quit":
         optionTexts["download"] = "Download new chapters for " + mangaName
         optionTexts["extract"] = "Extract pages from downloaded zip for " + mangaName
         optionTexts["build"] = "Build pdf from extracted pages for " + mangaName
+        optionTexts["clean"] = "Clean all downloaded files (it will keep only zip and pdf files)"
         optionTexts["quit"] = "Quit application"
         print("Options:")
         for i in range(len(options)):
@@ -311,6 +312,16 @@ while options[currrentOptionIndex] != "quit":
 
         firstImage.save(pdfLocation , save_all=True, append_images=otherImages)
         currrentOptionIndex = 0
+        
+    elif options[currrentOptionIndex] == "clean":
+        for manga in os.listdir(downloadLocation):
+            if os.path.exists(downloadLocation + manga + extractSuffix):
+                shutil.rmtree(downloadLocation + manga + extractSuffix)
+            if os.path.exists(downloadLocation + manga + pagesSuffix):
+                shutil.rmtree(downloadLocation + manga + pagesSuffix)
+        currrentOptionIndex = 0
+
+
 
 quit()
 
