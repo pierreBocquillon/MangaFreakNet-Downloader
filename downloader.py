@@ -10,6 +10,7 @@ import cv2
 baseUrl = "https://w13.mangafreak.net/Manga/"
 maxDownloadStep = 10
 reversed = False
+split = True
 downloadLocation = "./downloads/"
 zipSuffix =  "/zip/"
 extractSuffix =  "/images/"
@@ -135,6 +136,13 @@ while options[currrentOptionIndex] != "quit":
         currrentOptionIndex = 0
 
     elif options[currrentOptionIndex] == "extract":
+        
+        splitAnswer = input("Do you need to split the pages ? (y/n) ")
+        if splitAnswer.lower() == "y" or splitAnswer.lower() == "yes" :
+            split = True
+        else :
+            split = False
+
         if not os.path.exists(location):
             os.makedirs(location)
         
@@ -201,28 +209,42 @@ while options[currrentOptionIndex] != "quit":
                     os.makedirs(pagesLocation + chapter + "/")
 
                 img = cv2.imread(extractLocation + chapter + "/" + page)
-                width = img.shape[1]
-                cutPosition = int(width / 2)
-                leftPage = img[:, :cutPosition]
-                rightPage = img[:, cutPosition:]
 
-                pageName = page.split("_")[-1]
-                pageExtension = pageName.split(".")[1]
-                pageNumber = pageName.split(".")[0]
+                if split :
+                    width = img.shape[1]
+                    cutPosition = int(width / 2)
+                    leftPage = img[:, :cutPosition]
+                    rightPage = img[:, cutPosition:]
 
-                if len(pageNumber) == 1:
-                    pageNumber = "00" + pageNumber
-                elif len(pageNumber) == 2:
-                    pageNumber = "0" + pageNumber
-                
-                currentPageLocation = pagesLocation + chapter + "/" + pageNumber + "." + pageExtension
+                    pageName = page.split("_")[-1]
+                    pageExtension = pageName.split(".")[1]
+                    pageNumber = pageName.split(".")[0]
 
-                if reversed :
-                    cv2.imwrite(currentPageLocation.replace("." + pageExtension, "_1." + pageExtension), leftPage)
-                    cv2.imwrite(currentPageLocation.replace("." + pageExtension, "_2." + pageExtension), rightPage)
+                    if len(pageNumber) == 1:
+                        pageNumber = "00" + pageNumber
+                    elif len(pageNumber) == 2:
+                        pageNumber = "0" + pageNumber
+                    
+                    currentPageLocation = pagesLocation + chapter + "/" + pageNumber + "." + pageExtension
+
+                    if reversed :
+                        cv2.imwrite(currentPageLocation.replace("." + pageExtension, "_1." + pageExtension), leftPage)
+                        cv2.imwrite(currentPageLocation.replace("." + pageExtension, "_2." + pageExtension), rightPage)
+                    else :
+                        cv2.imwrite(currentPageLocation.replace("." + pageExtension, "_2." + pageExtension), leftPage)
+                        cv2.imwrite(currentPageLocation.replace("." + pageExtension, "_1." + pageExtension), rightPage)
                 else :
-                    cv2.imwrite(currentPageLocation.replace("." + pageExtension, "_2." + pageExtension), leftPage)
-                    cv2.imwrite(currentPageLocation.replace("." + pageExtension, "_1." + pageExtension), rightPage)
+                    pageName = page.split("_")[-1]
+                    pageExtension = pageName.split(".")[1]
+                    pageNumber = pageName.split(".")[0]
+
+                    if len(pageNumber) == 1:
+                        pageNumber = "00" + pageNumber
+                    elif len(pageNumber) == 2:
+                        pageNumber = "0" + pageNumber
+
+                    currentPageLocation = pagesLocation + chapter + "/" + pageNumber + "." + pageExtension
+                    cv2.imwrite(currentPageLocation, img)
                 
             clearConsole()
             currentPageNormalizedStep = int((pageStep / pageStepCount) * 30)
